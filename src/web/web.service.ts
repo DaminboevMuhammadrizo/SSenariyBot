@@ -44,8 +44,13 @@ export class WebMiddleware implements NestMiddleware {
   constructor(private web: WebService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    if ((req.method !== 'GET' && req.method !== 'HEAD') || req.path.startsWith('/api/') || req.path === '/webhook') return next();
-    const hit = this.web.files.get(req.path === '/index.html' ? '/' : req.path);
+    // Nest mounts this with forRoutes('*') → Express strips the mount path and req.path is always "/".
+    // Use the original URL (without the query) instead.
+    const url = req.originalUrl || req.url;
+    const q = url.indexOf('?');
+    const path = q === -1 ? url : url.slice(0, q);
+    if ((req.method !== 'GET' && req.method !== 'HEAD') || path.startsWith('/api/') || path === '/webhook') return next();
+    const hit = this.web.files.get(path === '/index.html' ? '/' : path);
     if (hit) return sendPack(req, res, hit);
     // any other in-app path (a reload on a sub-path) gets the shell
     if (String(req.headers.accept || '').includes('text/html') && this.web.files.has('/')) return sendPack(req, res, this.web.files.get('/')!);
