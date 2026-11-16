@@ -156,7 +156,7 @@ export class BillingService implements OnModuleInit {
     });
     if (method === 'invoice') {
       const link = await this.tg.api.createInvoiceLink({
-        title: `Tartib — ${qt.title}`.slice(0, 32),
+        title: `Ssenariychi — ${qt.title}`.slice(0, 32),
         description: kind === 'team' ? 'Jamoa obunasi: vazifalar, faollik, umumiy loyihalar' : 'Shaxsiy obuna',
         payload: `pay:${pay.id}`,
         provider_token: c.paymentToken,

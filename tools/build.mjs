@@ -47,7 +47,7 @@ const html = readFileSync(resolve(SRC, 'index.html'), 'utf8')
   .replace('/*CORE*/', () => core.trim());
 writeFileSync(resolve(OUT, 'index.html'), html);
 
-for (const f of ['logo.svg', 'manifest.webmanifest']) copyFileSync(resolve(SRC, f), resolve(OUT, f));
+for (const f of ['logo.svg', 'icon-192.png', 'manifest.webmanifest']) copyFileSync(resolve(SRC, f), resolve(OUT, f));
 copyFileSync(resolve(SRC, 'logo.svg'), resolve(OUT, 'favicon.svg'));
 
 const shell = ['./', 'favicon.svg', ...Object.values(chunkFiles)];

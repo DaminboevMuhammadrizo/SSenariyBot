@@ -69,7 +69,7 @@ export class TelegramService implements OnApplicationBootstrap, OnModuleDestroy 
     await this.bot.telegram.setMyCommands(USER_COMMANDS);
     for (const id of c.admins) await this.bot.telegram.setMyCommands(ADMIN_COMMANDS, { scope: { type: 'chat', chat_id: id } }).catch(() => {});
     if (c.webappUrl.startsWith('https://'))
-      await this.bot.telegram.setChatMenuButton({ menuButton: { type: 'web_app', text: 'Tartib', web_app: { url: c.webappUrl } } }).catch((e) => this.logger.warn(`menu button: ${e.message}`));
+      await this.bot.telegram.setChatMenuButton({ menuButton: { type: 'web_app', text: 'Ssenariychi', web_app: { url: c.webappUrl } } }).catch((e) => this.logger.warn(`menu button: ${e.message}`));
   }
 
   handleWebhookUpdate(update: any) {
@@ -120,7 +120,7 @@ export class TelegramService implements OnApplicationBootstrap, OnModuleDestroy 
         return void (await ctx.reply(`⚠️ ${(e as Error).message}`));
       }
     }
-    await ctx.reply(MESSAGES.welcome(ctx.from!.first_name), { parse_mode: 'HTML', ...openAppKeyboard('Tartibni ochish', param.startsWith('j_') ? `join=${param}` : '') });
+    await ctx.reply(MESSAGES.welcome(ctx.from!.first_name), { parse_mode: 'HTML', ...openAppKeyboard('Ssenariychini ochish', param.startsWith('j_') ? `join=${param}` : '') });
   }
 
   private async handleGrant(ctx: Context) {

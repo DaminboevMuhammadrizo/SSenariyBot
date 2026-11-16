@@ -32,7 +32,7 @@ export class WebService implements OnModuleInit {
     const add = (url: string, file: string, cache: string) => this.files.set(url, pack(readFileSync(file), TYPES[extname(file)] || 'application/octet-stream', cache));
     add('/', join(PUB, 'index.html'), 'no-cache');
     add('/sw.js', join(PUB, 'sw.js'), 'no-cache');
-    for (const f of ['favicon.svg', 'logo.svg', 'manifest.webmanifest']) if (existsSync(join(PUB, f))) add(`/${f}`, join(PUB, f), 'public, max-age=604800');
+    for (const f of ['favicon.svg', 'logo.svg', 'icon-192.png', 'manifest.webmanifest']) if (existsSync(join(PUB, f))) add(`/${f}`, join(PUB, f), 'public, max-age=604800');
     for (const dir of ['c', 'icons'])
       if (existsSync(join(PUB, dir))) for (const n of readdirSync(join(PUB, dir))) add(`/${dir}/${n}`, join(PUB, dir, n), dir === 'c' ? YEAR : 'public, max-age=604800');
     this.logger.log(`${this.files.size} files in RAM`);

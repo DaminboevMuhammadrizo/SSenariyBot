@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<title>Tartib</title>
+<title>Ssenariychi</title>
 <link rel="icon" href="favicon.svg">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://telegram.org">
@@ -13,8 +13,9 @@
 <script>
 // theme before first paint: saved choice, else Telegram's (from the launch URL), else the system's
 try{var t=localStorage.getItem('theme'),h=new URLSearchParams(location.hash.slice(1)).get('tgWebAppThemeParams'),d;
+if(t==='warm'){document.documentElement.dataset.theme='warm'}else{
 if(t==='dark'||t==='light')d=t==='dark';else if(h){var b=JSON.parse(h).bg_color.slice(1);d=(parseInt(b.slice(0,2),16)*.3+parseInt(b.slice(2,4),16)*.59+parseInt(b.slice(4,6),16)*.11)<128}
-else d=matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.dataset.theme='dark'}catch(e){}
+else d=matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.dataset.theme='dark'}}catch(e){}
 </script>
 <style>/*CSS*/</style>
 </head>

@@ -152,7 +152,7 @@ export class SchedulerService implements OnApplicationBootstrap, OnModuleDestroy
         dump.on('close', (code) => code && reject(new Error(`pg_dump exited with ${code}`)));
       });
       const users = await this.prisma.user.count();
-      await this.tg.api.sendDocument(c.storageChat, { source: data, filename: `tartib-${day}.sql.gz` }, { caption: `🗄 Tartib DB · ${users} foydalanuvchi · ${day}`, disable_notification: true });
+      await this.tg.api.sendDocument(c.storageChat, { source: data, filename: `tartib-${day}.sql.gz` }, { caption: `🗄 Ssenariychi DB · ${users} foydalanuvchi · ${day}`, disable_notification: true });
       this.logger.log(`backup sent (${(data.length / 2 ** 20).toFixed(1)} MB)`);
       return 'nusxa kanalga yuborildi';
     } catch (e) {

@@ -3,7 +3,7 @@ import { money } from '../common/time';
 
 export const MESSAGES = {
   welcome: (name: string) =>
-    `<b>Tartib</b> — SMM kontent rejasi Telegram ichida.\n\n` +
+    `<b>Ssenariychi</b> — SMM kontent rejasi Telegram ichida.\n\n` +
     `◻︎ Har bir loyiha uchun alohida kontent kalendar\n` +
     `◻︎ Post vaqtida eslatma\n` +
     `◻︎ Mijoz yoki jamoaga ko‘rsatish — 👍 / 👎 va izohlar\n` +

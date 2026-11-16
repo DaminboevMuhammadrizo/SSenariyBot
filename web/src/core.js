@@ -1,4 +1,4 @@
-// Tartib Mini App — core (inlined into index.html by tools/build.mjs).
+// Ssenariychi Mini App — core (inlined into index.html by tools/build.mjs).
 // First paint never waits for the network or the Telegram SDK: the screen is drawn from data already on
 // the device, then small requests (304 when nothing changed) refresh it in the background.
 // Team and admin screens are separate chunks, loaded on demand.
@@ -132,9 +132,10 @@
   function applyTheme() {
     let pref = null;
     try { pref = localStorage.getItem('theme'); } catch {}
-    const dark = pref === 'dark' || (pref !== 'light' && (tg?.colorScheme ? tg.colorScheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches));
-    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-    const bg = dark ? '#000000' : '#ffffff';
+    const warm = pref === 'warm';
+    const dark = !warm && (pref === 'dark' || (pref !== 'light' && (tg?.colorScheme ? tg.colorScheme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches)));
+    document.documentElement.dataset.theme = warm ? 'warm' : dark ? 'dark' : 'light';
+    const bg = warm ? '#f4ecd8' : dark ? '#000000' : '#ffffff';
     document.querySelector('meta[name=theme-color]')?.setAttribute('content', bg);
     try {
       tg?.setHeaderColor?.(bg);
@@ -257,8 +258,24 @@
     syncBack();
   }
   const skeleton = () => `<header class="top"><span class="sk" style="width:120px;height:24px"></span></header><div class="wrap"><span class="sk" style="width:55%;height:34px;margin:14px 0 22px"></span><div class="list"><span class="sk" style="height:76px;border-radius:18px"></span><span class="sk" style="height:76px;border-radius:18px"></span></div></div>`;
-  const logo = '<svg viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="currentColor"/><path d="M18 21h28M32 21v23" stroke="var(--bg)" stroke-width="5.2" stroke-linecap="round"/><circle cx="44.5" cy="44" r="3.6" fill="var(--bg)"/></svg>';
-  const backBtn = () => (tg ? '' : `<button class="ib" data-a="back" aria-label="Orqaga">${I('back')}</button>`);
+  const logo = '<svg viewBox="290 284 680 686"><rect x="297" y="291" width="660" height="672" rx="168" fill="currentColor"/><path d="M484 375H777A72 72 0 0 1 849 447V600L672 871H484A72 72 0 0 1 412 799V447A72 72 0 0 1 484 375Z" fill="var(--bg)"/><g fill="var(--bg)" stroke="currentColor" stroke-width="22"><rect x="349" y="469" width="117" height="59" rx="29.5"/><rect x="349" y="597" width="117" height="59" rx="29.5"/><rect x="349" y="731" width="117" height="59" rx="29.5"/></g><path d="M556 455 L668 521 L556 588 Z" fill="currentColor" stroke="currentColor" stroke-width="26" stroke-linejoin="round"/><path d="M540 658H717M540 740H673" stroke="currentColor" stroke-width="34" stroke-linecap="round"/><g transform="translate(702 866) rotate(-51)"><path d="M0 0 L66 -46 H262 A46 46 0 0 1 262 46 H66 Z" fill="var(--bg)" stroke="currentColor" stroke-width="22" stroke-linejoin="round"/><path d="M232 -46V46" stroke="currentColor" stroke-width="13"/></g></svg>';
+  const NAME = 'Ssenariychi';
+  // always visible and labelled — many people never notice Telegram's own back arrow
+  const backBtn = () => `<button class="backb" data-a="back">${I('back', 's')}Orqaga</button>`;
+
+  // ---------------------------------------------------------------- theme picker
+  const THEMES = [['light', 'Oq', '#ffffff'], ['warm', 'Sariq', '#f4ecd8'], ['dark', 'Qora', '#000000']];
+  const curTheme = () => { try { return localStorage.getItem('theme') || 'auto'; } catch { return 'auto'; } };
+  const setTheme = (v) => { try { v === 'auto' ? localStorage.removeItem('theme') : localStorage.setItem('theme', v); } catch {} applyTheme(); hap(); };
+  const themeRow = () => `<div class="themes">${THEMES.map(([v, l, c]) => `<button class="${curTheme() === v ? 'on' : ''}" data-a="theme" data-v="${v}"><i style="background:${c}"></i>${l}</button>`).join('')}</div>`;
+  function themeSheet() {
+    const s = sheet(`<div class="sh"><h2 class="t">Ko‘rinish</h2><span class="sp"></span><button class="ib" data-a="close">${I('close')}</button></div>
+      <p class="mute small" style="margin:-6px 0 14px">«Sariq» — ko‘zni charchatmaydi, uzoq o‘qish uchun qulay.</p>
+      ${themeRow()}`, {
+      close: () => closeSheet(s),
+      theme(el) { setTheme(el.dataset.v); for (const c of el.parentElement.children) c.classList.toggle('on', c === el); },
+    });
+  }
   function tabbar(cur) {
     on.tab = (el) => tab(el.dataset.v);
     const b = (v, icon, label) => `<button class="${cur === v ? 'on' : ''}" data-a="tab" data-v="${v}">${I(icon)}<span>${label}</span></button>`;
@@ -279,23 +296,25 @@
     on.open = (el) => openProject(+el.dataset.id);
     on.newp = () => projectSheet();
     on.archive = () => go('archive');
+    on.themes = () => themeSheet();
     const live = b.projects.filter((p) => !p.archived);
     const mine = live.filter((p) => !p.team && p.role === 'owner');
     const team = live.filter((p) => p.team);
     const shared = live.filter((p) => !p.team && p.role !== 'owner');
     const archived = b.projects.length - live.length;
-    const d = new Date();
     const first = (b.me.name || '').split(' ')[0];
-    const group = (title, list) => (list.length ? `<div class="sec"><span class="eyebrow">${title}</span><span class="tiny mute num">${list.length}</span></div><div class="list">${list.map(card).join('')}</div>` : '');
+    const group = (title, list) => (list.length ? `<div class="sec"><span class="eyebrow">${title}</span></div><div class="list">${list.map(card).join('')}</div>` : '');
     return `
-      <header class="top"><div class="mark grow">${logo}<span>tartib.</span></div>${planChip()}</header>
+      <header class="top"><div class="mark grow">${logo}<span>${NAME}</span></div><button class="ib" data-a="themes" aria-label="Ko‘rinish">${I('moon')}</button>${planChip()}</header>
       <div class="wrap">
-        <div class="eyebrow" style="margin-top:8px">${WDF[d.getDay()]} · ${d.getDate()} ${MONTHS[d.getMonth()].toLowerCase()}</div>
-        <h1 class="t">${first ? `Salom, ${esc(first)}` : 'Kontent rejalar'}</h1>
-        ${live.length ? '' : `<div class="empty">${P('spark')}<b>Birinchi loyihangiz</b>Har bir brend yoki mijoz uchun alohida kontent kalendar. Rang va ikonka — o‘zingizga.</div>`}
-        ${group('Mening loyihalarim', mine)}${group(b.ent.team ? esc(b.ent.team.name) : 'Jamoa', team)}${group('Men bilan ulashilgan', shared)}
-        <div style="margin-top:18px"><button class="btn ghost" data-a="newp">${I('plus', 's')} Yangi loyiha</button></div>
-        ${archived ? `<div style="text-align:center;margin-top:18px"><button class="link small" data-a="archive">Arxiv · ${archived}</button></div>` : ''}
+        <h1 class="t" style="margin-top:8px">${first ? `Salom, ${esc(first)}!` : 'Salom!'}</h1>
+        ${live.length
+          ? '<p class="mute" style="margin:6px 0 0">Loyihani bosing — ichida kalendar va postlar.</p>'
+          : `<div class="card" style="padding:20px;margin-top:18px"><b style="font:500 20px/1.3 var(--serif)">Qanday ishlaydi?</b>
+              <ol class="steps"><li><b>1</b>Loyiha oching (brend yoki mijoz nomi)</li><li><b>2</b>Kalendarda kunni tanlab, post yozing</li><li><b>3</b>Mijozga yuboring — u 👍 / 👎 bosib, izoh yozadi</li></ol></div>`}
+        <div style="margin-top:18px"><button class="btn" data-a="newp">${I('plus', 's')} Yangi loyiha ochish</button></div>
+        ${group('Mening loyihalarim', mine)}${group(b.ent.team ? esc(b.ent.team.name) : 'Jamoa loyihalari', team)}${group('Menga yuborilgan', shared)}
+        ${archived ? `<div style="text-align:center;margin-top:18px"><button class="link small" data-a="archive">Arxiv (${archived})</button></div>` : ''}
       </div>${tabbar('home')}`;
   };
   function card(p) {
@@ -375,26 +394,24 @@
     on.filter = (el) => { st.filter = el.dataset.v; render(); };
     on.past = () => { st.past = !st.past; render(); };
 
-    const counts = {};
-    for (const x of p.posts) counts[x.status] = (counts[x.status] || 0) + 1;
     const total = p.posts.length;
-    const bar = total
-      ? `<div class="statusbar" style="${p.color ? `--pc:${esc(p.color)}` : ''}">${Object.keys(STATUS).map((s) => (counts[s] ? `<i style="width:${(counts[s] / total) * 100}%;opacity:${0.18 + STATUS[s][1] * 0.82}"></i>` : '')).join('')}</div>
-         <div class="legend">${Object.keys(STATUS).filter((s) => counts[s]).map((s) => `<span>${ring(s)} ${STATUS[s][0]} <b class="num">${counts[s]}</b></span>`).join('')}</div>`
-      : '';
+    const done = p.posts.filter((x) => STATUS[x.status]?.[1] >= 0.75).length;
+    const act = (a, icon, label, main = false) => `<button class="act ${main ? 'main' : ''}" data-a="${a}">${I(icon)}${label}</button>`;
     return `
       <header class="top">${backBtn()}
         <div class="row grow" style="gap:10px;min-width:0">${projIcon(meta || p, 'sm')}<b class="ell" style="font:500 19px/1.2 var(--serif);letter-spacing:-.01em">${esc(p.name)}</b></div>
-        ${edit && S.boot?.ai ? `<button class="ib" data-a="ai" aria-label="AI">${I('ai')}</button>` : ''}
-        ${owner ? `<button class="ib" data-a="share" aria-label="Ulashish">${I('share')}</button>` : ''}
-        <button class="ib" data-a="settings" aria-label="Sozlamalar">${I('sliders')}</button>
       </header>
       <div class="wrap" style="${p.color ? `--pc:${esc(p.color)}` : ''}">
-        ${bar}
-        <div class="seg" style="margin-top:16px"><button class="${st.mode === 'cal' ? 'on' : ''}" data-a="mode" data-v="cal">Kalendar</button><button class="${st.mode === 'list' ? 'on' : ''}" data-a="mode" data-v="list">Ro‘yxat</button></div>
+        <div class="acts">
+          ${edit ? act('add', 'plus', 'Post qo‘shish', true) : ''}
+          ${owner ? act('share', 'share', 'Mijozga yuborish') : ''}
+          ${edit && S.boot?.ai ? act('ai', 'ai', 'AI reja') : ''}
+          ${act('settings', 'sliders', 'Sozlamalar')}
+        </div>
+        ${total ? `<p class="mute small" style="margin:12px 2px 0">Jami <b class="num" style="color:var(--ink)">${total}</b> ta post · <b class="num" style="color:var(--ink)">${done}</b> tasi tayyor</p>` : ''}
+        <div class="seg" style="margin-top:14px"><button class="${st.mode === 'cal' ? 'on' : ''}" data-a="mode" data-v="cal">${I('cal', 's')} Kalendar</button><button class="${st.mode === 'list' ? 'on' : ''}" data-a="mode" data-v="list">${I('list', 's')} Ro‘yxat</button></div>
         ${st.mode === 'cal' ? calendar(p, st, edit) : listView(p, st)}
-      </div>
-      ${edit ? `<button class="fab low" data-a="add" aria-label="Post qo‘shish">${I('plus', 'l')}</button>` : ''}`;
+      </div>`;
   };
 
   function calendar(p, st, edit) {
@@ -474,18 +491,23 @@
       : { title: '', date: date || today(), time: '', platform: S.boot?.me.prefs?.platform || 'instagram', kind: 'post', status: 'idea', body: '', notes: '', remind: remindOf(null) };
     const chipRow = (k, map, label = (v) => v) => `<div class="chips" data-k="${k}">${Object.keys(map).map((v) => `<button class="chip ${f[k] === v ? 'on' : ''}" data-a="pf" data-k="${k}" data-v="${v}">${label(v)}</button>`).join('')}</div>`;
     const ai = !!S.boot?.ai;
+    const more = !!(post && (post.notes || post.kind !== 'post'));
     const head = `<div class="sh"><span class="eyebrow">${post ? (edit ? 'Post' : esc(p.name)) : 'Yangi post'}</span><span class="sp"></span><button class="ib" data-a="close">${I('close')}</button></div>`;
 
     const form = `
-      <input class="titlein" id="f-title" placeholder="Post mavzusi" maxlength="200" value="${esc(f.title)}">
+      <label class="eyebrow">Post nima haqida?</label>
+      <input class="titlein" id="f-title" placeholder="Masalan: Yangi menyu taqdimoti" maxlength="200" value="${esc(f.title)}">
       <div class="two field"><label><span class="eyebrow">Sana</span><input type="date" id="f-date" value="${f.date}"></label><label><span class="eyebrow">Vaqt</span><input type="time" id="f-time" value="${f.time}"></label></div>
       <div class="field"><label class="eyebrow">Platforma</label>${chipRow('platform', PLATFORMS, (v) => PLATFORMS[v][0])}</div>
-      <div class="field"><label class="eyebrow">Format</label>${chipRow('kind', KINDS, (v) => KINDS[v])}</div>
-      <div class="field"><label class="eyebrow">Holat</label>${chipRow('status', STATUS, (v) => `${ring(v)}${STATUS[v][0]}`)}</div>
-      <div class="field"><label class="eyebrow">Matn / ssenariy</label><textarea id="f-body" rows="6" maxlength="8000" placeholder="Post matni, ssenariy yoki g‘oya…">${esc(f.body)}</textarea>
+      <div class="field"><label class="eyebrow">Holati</label>${chipRow('status', STATUS, (v) => `${ring(v)}${STATUS[v][0]}`)}</div>
+      <div class="field"><label class="eyebrow">Matn yoki ssenariy</label><textarea id="f-body" rows="6" maxlength="8000" placeholder="Post matni, ssenariy yoki g‘oya…">${esc(f.body)}</textarea>
         ${ai ? `<div class="aibar"><button class="chip" data-a="ai" data-k="caption">${I('ai', 'xs')} Yozib ber</button><button class="chip" data-a="ai" data-k="improve">${I('wand', 'xs')} Yaxshila</button><button class="chip" data-a="ai" data-k="hashtags">${I('hash', 'xs')} Heshteglar</button></div>` : ''}</div>
-      <div class="field"><label class="eyebrow">Ichki izoh</label><textarea id="f-notes" rows="2" maxlength="2000" style="min-height:60px" placeholder="Jamoa uchun eslatma, havolalar…">${esc(f.notes)}</textarea></div>
-      <div class="field"><label class="eyebrow">${I('bell', 'xs')} Eslatma</label><div class="chips" data-k="remind">${REMIND.map(([v, l]) => `<button class="chip ${f.remind === v ? 'on' : ''}" data-a="pf" data-k="remind" data-v="${v}">${l}</button>`).join('')}</div></div>
+      <div class="field"><label class="eyebrow">${I('bell', 'xs')} Bot qachon eslatsin?</label><div class="chips" data-k="remind">${REMIND.map(([v, l]) => `<button class="chip ${f.remind === v ? 'on' : ''}" data-a="pf" data-k="remind" data-v="${v}">${l}</button>`).join('')}</div></div>
+      <div style="margin-top:16px"><button class="link small" data-a="more">${more ? 'Kamroq ko‘rsatish' : 'Ko‘proq sozlamalar (format, izoh)'}</button></div>
+      <div id="more"${more ? '' : ' hidden'}>
+        <div class="field"><label class="eyebrow">Format</label>${chipRow('kind', KINDS, (v) => KINDS[v])}</div>
+        <div class="field"><label class="eyebrow">Ichki izoh (faqat jamoa ko‘radi)</label><textarea id="f-notes" rows="2" maxlength="2000" style="min-height:60px" placeholder="Eslatma, havolalar…">${esc(f.notes)}</textarea></div>
+      </div>
       <div style="margin-top:22px"><button class="btn" data-a="save">${post ? 'Saqlash' : 'Qo‘shish'}</button></div>
       ${post ? `<div style="text-align:center;margin-top:12px"><button class="link small mute" data-a="del">O‘chirish</button></div>` : ''}`;
 
@@ -498,7 +520,7 @@
       : '';
 
     const feedback = post
-      ? `<div class="hr"></div><div class="eyebrow" style="margin-bottom:10px">Fikrlar</div>
+      ? `<div class="hr"></div><div class="eyebrow" style="margin-bottom:10px">Sizga yoqdimi?</div>
          <div class="votes"><button class="vote ${post.up.includes(me) ? 'on' : ''}" data-a="vote" data-v="1">${I('up', 's')} Yaxshi <span class="num">${post.up.length}</span></button><button class="vote ${post.down.includes(me) ? 'on' : ''}" data-a="vote" data-v="-1">${I('down', 's')} Yomon <span class="num">${post.down.length}</span></button></div>
          ${post.up.length + post.down.length ? `<div class="tiny mute" style="margin-top:8px">${[...post.up.map((u) => `👍 ${esc(p.people[u] || '')}`), ...post.down.map((u) => `👎 ${esc(p.people[u] || '')}`)].join(' · ')}</div>` : ''}
          <div id="cmts" style="margin-top:8px">${post.comments ? '<div class="shimmer" style="height:44px"></div>' : ''}</div>
@@ -507,6 +529,11 @@
 
     const s = sheet(head + (edit ? form : view) + feedback, {
       close: () => closeSheet(s),
+      more(el) {
+        const box = s.el.querySelector('#more');
+        box.hidden = !box.hidden;
+        el.textContent = box.hidden ? 'Ko‘proq sozlamalar (format, izoh)' : 'Kamroq ko‘rsatish';
+      },
       pf(el) {
         f[el.dataset.k] = el.dataset.v;
         for (const c of el.parentElement.children) c.classList.toggle('on', c === el);
@@ -886,23 +913,16 @@
   VIEWS.profile = () => {
     const b = S.boot;
     if (!b) return skeleton() + tabbar('profile');
-    let theme = 'auto';
-    try { theme = localStorage.getItem('theme') || 'auto'; } catch {}
     const e = b.ent;
     on.plans = () => go('plans');
     on.team = () => tab('team');
     on.admin = () => go('admin');
     on.archive = () => go('archive');
-    on.theme = (el) => {
-      const v = el.dataset.v;
-      try { v === 'auto' ? localStorage.removeItem('theme') : localStorage.setItem('theme', v); } catch {}
-      applyTheme();
-      render();
-    };
+    on.theme = (el) => { setTheme(el.dataset.v); render(); };
     on.help = () => { const u = `https://t.me/${b.bot}`; tg ? tg.openTelegramLink(u) : open(u, '_blank'); };
     const aiPct = e.aiQuota ? Math.min(100, Math.round((e.aiUsed / e.aiQuota) * 100)) : 0;
     const archived = b.projects.filter((p) => p.archived).length;
-    return `<header class="top"><div class="mark grow">${logo}<span>tartib.</span></div></header>
+    return `<header class="top"><div class="mark grow">${logo}<span>${NAME}</span></div></header>
       <div class="wrap">
         <div class="row" style="margin-top:10px;gap:16px"><span class="av lg">${initials(b.me.name)}</span><div style="min-width:0"><h2 class="t ell">${esc(b.me.name)}</h2><div class="mute small">${b.me.username ? '@' + esc(b.me.username) : `ID ${b.me.id}`}</div></div></div>
         <div class="card" style="padding:18px;margin-top:22px">
@@ -915,8 +935,9 @@
           <button class="mi" data-a="help">${I('help')}<span class="grow">Yordam va takliflar</span>${I('next', 's')}</button>
           ${b.me.admin ? `<button class="mi" data-a="admin">${I('chart')}<span class="grow">Admin panel</span>${I('next', 's')}</button>` : ''}
         </div>
-        <div class="field"><label class="eyebrow">Ko‘rinish</label><div class="seg">${[['auto', 'Avto'], ['light', 'Oq'], ['dark', 'Qora']].map(([v, l]) => `<button class="${theme === v ? 'on' : ''}" data-a="theme" data-v="${v}">${l}</button>`).join('')}</div></div>
-        <p class="tiny mute" style="text-align:center;margin-top:30px">tartib. · SMM kontent reja</p>
+        <div class="field" style="margin-top:22px"><label class="eyebrow">Ko‘rinish</label>${themeRow()}
+          <div class="tiny mute" style="margin-top:8px">«Sariq» — ko‘zni charchatmaydi.${curTheme() === 'auto' ? ' Hozir Telegram rangiga moslashgan.' : ` <button class="link tiny" data-a="theme" data-v="auto">Telegram rangiga qaytarish</button>`}</div></div>
+        <p class="tiny mute" style="text-align:center;margin-top:30px">${NAME} · SMM kontent reja</p>
       </div>${tabbar('profile')}`;
   };
 
@@ -963,7 +984,7 @@
       }
     }
     if (!initData && !devId) {
-      root.innerHTML = `<div class="wrap" style="padding-top:20vh;text-align:center"><div class="mark" style="justify-content:center;font-size:30px">${logo}<span>tartib.</span></div><p class="mute" style="margin-top:16px">Ilovani Telegram ichida oching.</p></div>`;
+      root.innerHTML = `<div class="wrap" style="padding-top:20vh;text-align:center"><div class="mark" style="justify-content:center;font-size:30px">${logo}<span>${NAME}</span></div><p class="mute" style="margin-top:16px">Ilovani Telegram ichida oching.</p></div>`;
       return;
     }
     const startParam = launch.get('tgWebAppStartParam') || tg?.initDataUnsafe?.start_param || qs.get('join') || '';
