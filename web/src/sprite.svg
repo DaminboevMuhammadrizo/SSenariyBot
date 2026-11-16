@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Tartib's own line icons: 24 grid, 1.6 stroke, round joins. App icons first, then project icons. -->
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+<symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+<symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+<symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" stroke-width="2"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 8L12 3.5 16.5 8M5 13.5v4.5a2.5 2.5 0 002.5 2.5h9a2.5 2.5 0 002.5-2.5v-4.5"/></symbol>
+<symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 7.5h9M18 7.5h2M4 16.5h3M11 16.5h9"/><circle cx="15.5" cy="7.5" r="2.3"/><circle cx="9" cy="16.5" r="2.3"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 1112 0v5.5l1.5 1.8h-15zM10 20.5a2.2 2.2 0 004 0"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M7.5 10.5V20M7.5 10.5l3.7-6.7c1.6 0 2.7 1.2 2.4 2.8l-.7 3.9h5a2 2 0 012 2.3l-1.1 5.8a2.3 2.3 0 01-2.3 1.9H7.5M3.5 10.5h4V20h-4z"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><g transform="rotate(180 12 12)"><path d="M7.5 10.5V20M7.5 10.5l3.7-6.7c1.6 0 2.7 1.2 2.4 2.8l-.7 3.9h5a2 2 0 012 2.3l-1.1 5.8a2.3 2.3 0 01-2.3 1.9H7.5M3.5 10.5h4V20h-4z"/></g></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 016.5 4h11A2.5 2.5 0 0120 6.5v7a2.5 2.5 0 01-2.5 2.5H10l-6 4z"/></symbol>
+<symbol id="i-ai" viewBox="0 0 24 24"><path d="M11 3.5c.7 4.6 3 6.9 7.5 7.5-4.5.6-6.8 2.9-7.5 7.5-.7-4.6-3-6.9-7.5-7.5 4.5-.6 6.8-2.9 7.5-7.5zM19 3v3.5M17.3 4.7h3.4"/></symbol>
+<symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.3"/><path d="M3 20c0-3.4 2.7-6 6-6s6 2.6 6 6M15.5 4.8a3.3 3.3 0 010 6.4M21 20c0-2.7-1.6-5-4-5.8"/></symbol>
+<symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c0-4.1 3.4-7.5 7.5-7.5s7.5 3.4 7.5 7.5"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2.2"/><rect x="13" y="4" width="7" height="7" rx="2.2"/><rect x="4" y="13" width="7" height="7" rx="2.2"/><rect x="13" y="13" width="7" height="7" rx="2.2"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.5"/><path d="M15.5 8.5V6.5A2.5 2.5 0 0013 4H6.5A2.5 2.5 0 004 6.5V13a2.5 2.5 0 002.5 2.5h2"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+<symbol id="i-chart" viewBox="0 0 24 24"><path d="M5 20v-8M12 20V5M19 20v-5"/></symbol>
+<symbol id="i-crown" viewBox="0 0 24 24"><path d="M3.5 8l4.5 4L12 5l4 7 4.5-4-2 11h-13z"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9.5" rx="2.5"/><path d="M8.5 11V8a3.5 3.5 0 017 0v3"/></symbol>
+<symbol id="i-archive" viewBox="0 0 24 24"><rect x="3.5" y="4" width="17" height="4.5" rx="1.5"/><path d="M5.5 8.5V18a2 2 0 002 2h9a2 2 0 002-2V8.5M10 12.5h4"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M4.5 19.5h4L19 9l-4-4L4.5 15.5zM13.5 6.5l4 4"/></symbol>
+<symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A7.5 7.5 0 019.5 4.5a7.5 7.5 0 1010 10z"/></symbol>
+<symbol id="i-task" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4.5"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+<symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.6a2.5 2.5 0 114 2c-1 .6-1.6 1.2-1.6 2.4M12 17h.01"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M5 12L19.5 5 15 19.5l-3-6z"/></symbol>
+<symbol id="i-hash" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10.5 4.5L9 19.5M15.5 4.5L14 19.5"/></symbol>
+<symbol id="i-wand" viewBox="0 0 24 24"><path d="M4.5 19.5L14 10M12.5 8.5l3 3M15 3.5v2M19.5 8h2M18.5 4.5L17 6"/></symbol>
+<symbol id="i-money" viewBox="0 0 24 24"><rect x="3" y="6.5" width="18" height="11" rx="2.5"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 12h.01M17.5 12h.01" stroke-width="2"/></symbol>
+<symbol id="i-flag" viewBox="0 0 24 24"><path d="M5.5 20.5V4.5M5.5 5h11l-2 4 2 4h-11"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4"/></symbol>
+<symbol id="i-out" viewBox="0 0 24 24"><path d="M14 4.5h3.5a2 2 0 012 2v11a2 2 0 01-2 2H14M10 8l-4 4 4 4M6 12h9"/></symbol>
+<!-- project icons -->
+<symbol id="p-spark" viewBox="0 0 24 24"><path d="M12 3.5c.8 4.9 3.2 7.3 8 8-4.8.7-7.2 3.1-8 8-.8-4.9-3.2-7.3-8-8 4.8-.7 7.2-3.1 8-8z"/></symbol>
+<symbol id="p-coffee" viewBox="0 0 24 24"><path d="M5 9.5h11V14a5 5 0 01-5 5h-1a5 5 0 01-5-5zM16 11h1.5a2.5 2.5 0 010 5H16M8.5 3.5v3M12 3.5v3"/></symbol>
+<symbol id="p-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="3"/><circle cx="12" cy="13.5" r="3.5"/><path d="M8 7l1.5-2.5h5L16 7"/></symbol>
+<symbol id="p-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1 12.5H6zM9 8V6.5a3 3 0 016 0V8"/></symbol>
+<symbol id="p-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.5-7.5-10.2A4.2 4.2 0 0112 7.2a4.2 4.2 0 017.5 2.6C19.5 15.5 12 20 12 20z"/></symbol>
+<symbol id="p-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1.1 5.9L12 16.9l-5.3 2.8 1.1-5.9-4.3-4.1 5.9-.8z"/></symbol>
+<symbol id="p-bolt" viewBox="0 0 24 24"><path d="M13.5 3L5.5 13.5h6l-1 7.5 8-10.5h-6z"/></symbol>
+<symbol id="p-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c3 3.3 3 13.7 0 17M12 3.5c-3 3.3-3 13.7 0 17"/></symbol>
+<symbol id="p-music" viewBox="0 0 24 24"><path d="M9 17.5V6l10-2v11.5"/><circle cx="6.5" cy="17.5" r="2.5"/><circle cx="16.5" cy="15.5" r="2.5"/></symbol>
+<symbol id="p-book" viewBox="0 0 24 24"><path d="M4.5 5.5A2 2 0 016.5 3.5h13v15h-13a2 2 0 00-2 2zM4.5 20.5v-15M8.5 7.5h7"/></symbol>
+<symbol id="p-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9.5H4zM10 20.5V15h4v5.5"/></symbol>
+<symbol id="p-rocket" viewBox="0 0 24 24"><path d="M14 4h6v6l-7.5 7.5-6-6zM6.5 11.5l-3 1 2 2M12.5 17.5l-1 3-2-2"/><circle cx="15.5" cy="8.5" r="1.5"/></symbol>
+<symbol id="p-gem" viewBox="0 0 24 24"><path d="M6.5 4h11l3.5 5-9 11L3 9zM3 9h18M12 20L8.5 9 12 4l3.5 5z"/></symbol>
+<symbol id="p-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8.5 5-14.5 15-14.5 0 10-6 15.5-14 15.5M5 19l8-8"/></symbol>
+<symbol id="p-film" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M7.5 4.5v15M16.5 4.5v15M3.5 9.5h4M3.5 14.5h4M16.5 9.5h4M16.5 14.5h4"/></symbol>
+<symbol id="p-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 01-8 0zM8 6H5a3 3 0 003 4M16 6h3a3 3 0 01-3 4M12 13v4M8 20.5h8M10 17h4v3.5h-4z"/></symbol>
+<symbol id="p-fire" viewBox="0 0 24 24"><path d="M12 3c1 4 5.5 5.5 5.5 10.5a5.5 5.5 0 01-11 0c0-2.2 1-3.8 2.2-4.8.3 1.6 1 2.6 2.1 3.1C10.8 8.6 10.8 6 12 3z"/></symbol>
+<symbol id="p-smile" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 14a4 4 0 007 0M9 9.5h.01M15 9.5h.01" stroke-width="1.9"/></symbol>
+<symbol id="p-mic" viewBox="0 0 24 24"><rect x="9" y="3.5" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0013 0M12 18v3"/></symbol>
+<symbol id="p-gym" viewBox="0 0 24 24"><path d="M6.5 7.5v9M17.5 7.5v9M3.5 10v4M20.5 10v4M6.5 12h11"/></symbol>
+<symbol id="p-shirt" viewBox="0 0 24 24"><path d="M8.5 4L3.5 7l2 4 2-1v10.5h9V10l2 1 2-4-5-3c-.6 1.5-2 2.5-3.5 2.5S9.1 5.5 8.5 4z"/></symbol>
+<symbol id="p-food" viewBox="0 0 24 24"><path d="M6 3.5V9a2 2 0 004 0V3.5M8 11v9.5M17 3.5c-2 0-3 2-3 5.5s1 4 3 4v7.5"/></symbol>
+<symbol id="p-code" viewBox="0 0 24 24"><path d="M8.5 7l-5 5 5 5M15.5 7l5 5-5 5M13.5 5l-3 14"/></symbol>
+<symbol id="p-edu" viewBox="0 0 24 24"><path d="M2.5 9.5l9.5-5 9.5 5-9.5 5zM6.5 11.5v4.5c2.5 2.3 8.5 2.3 11 0v-4.5M21.5 9.5v5"/></symbol>
+<symbol id="p-tag" viewBox="0 0 24 24"><path d="M3.5 12.5V4.5h8l9 9-8 8z"/><circle cx="8" cy="9" r="1.5"/></symbol>
+<symbol id="p-car" viewBox="0 0 24 24"><path d="M4 16v-3.5L6.5 7h11l2.5 5.5V16zM4 16v3h3v-3M17 16v3h3v-3M7.5 12.5h.01M16.5 12.5h.01" stroke-width="1.8"/></symbol>
+<symbol id="p-paw" viewBox="0 0 24 24"><path d="M12 13c-3 0-5.5 3-5.5 5 0 1.5 1.5 2 3 1.5 1-.3 1.7-.5 2.5-.5s1.5.2 2.5.5c1.5.5 3 0 3-1.5 0-2-2.5-5-5.5-5z"/><circle cx="6" cy="10" r="1.8"/><circle cx="18" cy="10" r="1.8"/><circle cx="9.5" cy="6" r="1.8"/><circle cx="14.5" cy="6" r="1.8"/></symbol>
+<symbol id="p-plane" viewBox="0 0 24 24"><path d="M10.5 13.5L3.5 11l1.5-1.5 7 1 4.5-5a2 2 0 013 3l-5 4.5 1 7L14 21.5l-2.5-7"/></symbol>
+</svg>

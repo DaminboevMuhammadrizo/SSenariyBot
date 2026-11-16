@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15
+    container_name: tartib_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: tartib_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tartib_pass}
+      POSTGRES_DB: tartib
+    # tashqi portga chiqarilmaydi: app bazaga Docker ichki tarmog'i orqali ("db" nomi bilan) ulanadi
+    command: >
+      postgres -c shared_buffers=128MB -c effective_cache_size=384MB -c work_mem=4MB
+               -c max_connections=40 -c synchronous_commit=off
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tartib_user -d tartib"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: tartib_app
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:${PORT:-4002}:${PORT:-4002}"
+    mem_limit: 512m
+    stop_grace_period: 15s
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:$${PORT:-4002}/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    command: >
+      sh -c "npx prisma db push --skip-generate &&
+             exec node --max-old-space-size=256 dist/main"
+
+volumes:
+  postgres_data:

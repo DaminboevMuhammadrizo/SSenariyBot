@@ -1,0 +1,246 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Telegram foydalanuvchisi (id = Telegram user id)
+model User {
+  id        BigInt    @id
+  name      String    @default("")
+  username  String?
+  joinedAt  DateTime  @default(now())
+  lastSeen  DateTime  @default(now())
+  blocked   Boolean   @default(false)
+  plan      String    @default("free")
+  planUntil DateTime?
+  expNote   DateTime? /// obuna tugashi haqida qaysi sana uchun xabar yuborilgan
+  aiMonth   String    @default("") /// "2026-11" — aiUsed shu oyga tegishli
+  aiUsed    Int       @default(0)
+  state     String? /// "receipt:<paymentId>" — chek kutilmoqda
+  prefs     Json      @default("{}")
+
+  projects Project[]
+  members  Member[]
+  posts    Post[]
+  votes    Vote[]
+  comments Comment[]
+  team     TeamMember?
+  payments Payment[]
+
+  @@index([joinedAt])
+  @@index([lastSeen])
+  @@index([planUntil])
+}
+
+model Team {
+  id          Int       @id @default(autoincrement())
+  ownerId     BigInt
+  name        String
+  seats       Int
+  paidUntil   DateTime
+  expNote     DateTime?
+  inviteToken String?   @unique
+  rev         Int       @default(1)
+  createdAt   DateTime  @default(now())
+
+  members  TeamMember[]
+  projects Project[]
+  tasks    Task[]
+
+  @@index([ownerId])
+  @@index([paidUntil])
+}
+
+model TeamMember {
+  teamId   Int
+  userId   BigInt   @unique
+  role     String /// owner | manager | member
+  joinedAt DateTime @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([teamId, userId])
+}
+
+model Project {
+  id         Int      @id @default(autoincrement())
+  ownerId    BigInt
+  teamId     Int?
+  name       String
+  icon       String   @default("spark")
+  color      String?
+  shareToken String?  @unique
+  archived   Boolean  @default(false)
+  rev        Int      @default(1) /// har o'zgarishda +1: ETag va kesh kaliti
+  createdAt  DateTime @default(now())
+
+  owner   User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  team    Team?    @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  members Member[]
+  posts   Post[]
+
+  @@index([ownerId])
+  @@index([teamId])
+}
+
+model Member {
+  projectId Int
+  userId    BigInt
+  role      String /// viewer | editor
+  joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, userId])
+  @@index([userId])
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  projectId Int
+  date      String /// YYYY-MM-DD
+  time      String    @default("") /// HH:MM
+  platform  String
+  kind      String
+  status    String
+  title     String
+  body      String    @default("")
+  notes     String    @default("")
+  remindAt  DateTime?
+  reminded  Boolean   @default(false)
+  authorId  BigInt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  votes    Vote[]
+  comments Comment[]
+
+  @@index([projectId, date])
+  @@index([reminded, remindAt])
+}
+
+model Vote {
+  postId Int
+  userId BigInt
+  v      Int /// 1 yaxshi, -1 yomon
+  at     DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([postId, userId])
+}
+
+model Comment {
+  id     Int      @id @default(autoincrement())
+  postId Int
+  userId BigInt
+  text   String
+  at     DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model Task {
+  id         Int       @id @default(autoincrement())
+  teamId     Int
+  projectId  Int?
+  title      String
+  descr      String    @default("")
+  assigneeId BigInt
+  createdBy  BigInt
+  deadline   DateTime
+  status     String    @default("open") /// open | done | approved
+  note       String    @default("")
+  doneAt     DateTime?
+  approvedAt DateTime?
+  reminded   Int       @default(0) /// 0 hali yo'q, 1 muddatdan oldin, 2 muddat o'tgani
+  createdAt  DateTime  @default(now())
+
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@index([teamId, status])
+  @@index([status, reminded, deadline])
+}
+
+/// Tariflar — admin paneldan tahrirlanadi
+model Plan {
+  id          String  @id
+  name        String
+  priceMonth  Int     @default(0)
+  priceYear   Int     @default(0)
+  ai          Boolean @default(false)
+  aiQuota     Int     @default(0)
+  maxProjects Int     @default(0) /// 0 = cheksiz
+  maxPosts    Int     @default(0) /// loyihadagi postlar, 0 = cheksiz
+  active      Boolean @default(true)
+  sort        Int     @default(0)
+}
+
+model Setting {
+  key   String @id
+  value Json
+}
+
+model Payment {
+  id        Int       @id @default(autoincrement())
+  userId    BigInt
+  kind      String /// plan | team
+  planId    String?
+  period    String /// month | year
+  seats     Int       @default(0)
+  teamName  String?
+  amount    Int
+  status    String    @default("new") /// new | pending | paid | rejected
+  method    String /// card | invoice
+  fileId    String?
+  createdAt DateTime  @default(now())
+  decidedAt DateTime?
+  decidedBy BigInt?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+  @@index([userId])
+}
+
+/// Kunlik faollik: bitta qator = foydalanuvchi shu kuni kirgan, n = amallar soni
+model Activity {
+  day    String /// YYYY-MM-DD (Toshkent vaqti)
+  userId BigInt
+  n      Int    @default(0)
+
+  @@id([day, userId])
+  @@index([userId, day])
+}
+
+/// AI ishlatilishi kun va so'rov turi bo'yicha (admin statistikasi uchun)
+model AiDaily {
+  day    String
+  kind   String
+  req    Int    @default(0)
+  ok     Int    @default(0)
+  cached Int    @default(0)
+  tin    Int    @default(0)
+  tout   Int    @default(0)
+
+  @@id([day, kind])
+}
+
+/// Admin chatiga yuborilgan murojaat xabari -> foydalanuvchi (admin reply qilsa javob qaytadi)
+model Support {
+  msgId  Int    @id
+  userId BigInt
+}

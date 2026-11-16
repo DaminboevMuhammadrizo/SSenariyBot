@@ -1,0 +1,14 @@
+import { Module } from '@nestjs/common';
+import { ProjectsService } from './projects.service';
+import { ProjectsController } from './projects.controller';
+import { BillingModule } from '../billing/billing.module';
+import { SchedulerModule } from '../scheduler/scheduler.module';
+import { TeamModule } from '../team/team.module';
+
+@Module({
+  imports: [BillingModule, SchedulerModule, TeamModule],
+  controllers: [ProjectsController],
+  providers: [ProjectsService],
+  exports: [ProjectsService],
+})
+export class ProjectsModule {}

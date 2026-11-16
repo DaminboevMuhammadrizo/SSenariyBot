@@ -1,0 +1,101 @@
+name: Deploy Tartib
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install, type-check, build
+        run: |
+          npm ci || npm install
+          npx prisma generate
+          npx tsc --noEmit -p tsconfig.json
+          npm run build
+          npm run build:web
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          timeout: 60s
+          command_timeout: 30m
+          script: |
+            set -e
+            echo "📁 Creating app folder..."
+            mkdir -p /var/www/tartib
+            cd /var/www/tartib
+
+            if [ ! -d ".git" ]; then
+              echo "📥 Cloning repository..."
+              git clone https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git .
+            else
+              echo "♻️ Pulling latest code..."
+              git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
+              git reset --hard
+              git pull origin main
+            fi
+
+            {
+              echo "NODE_ENV=production"
+              echo "PORT=${{ secrets.APP_PORT || '4002' }}"
+              echo "TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}"
+              echo "BOT_USERNAME=${{ secrets.BOT_USERNAME }}"
+              echo "WEBAPP_URL=${{ secrets.WEBAPP_URL }}"
+              echo "WEBHOOK_DOMAIN=${{ secrets.WEBHOOK_DOMAIN }}"
+              echo "WEBHOOK_PATH=/webhook"
+              echo "WEBHOOK_SECRET=${{ secrets.WEBHOOK_SECRET }}"
+              echo "ADMIN_TELEGRAM_ID=${{ secrets.ADMIN_TELEGRAM_ID }}"
+              echo "ADMIN_GROUP_ID=${{ secrets.ADMIN_GROUP_ID }}"
+              echo "STORAGE_CHAT_ID=${{ secrets.STORAGE_CHAT_ID }}"
+              echo "PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }}"
+              echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}"
+              echo "GEMINI_MODEL=${{ secrets.GEMINI_MODEL || 'gemini-2.5-flash' }}"
+              echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}"
+              echo "DATABASE_URL=postgresql://tartib_user:${{ secrets.POSTGRES_PASSWORD }}@db:5432/tartib"
+              echo "CACHE_MAX_MB=64"
+              echo "RSS_SOFT_MB=350"
+            } > .env
+
+            echo "🛠️ Building (eski konteyner build davomida ishlab turadi)..."
+            # MUHIM: build 'up'dan OLDIN — foydalanuvchilar build vaqtida 502 ko'rmaydi
+            docker compose build
+
+            echo "🔄 Almashtirish (faqat image o'zgargan konteyner qayta tushadi, db tegilmaydi)..."
+            docker compose up -d --remove-orphans
+
+            echo "🩺 Health check..."
+            for i in $(seq 1 30); do
+              if curl -fsS http://127.0.0.1:${{ secrets.APP_PORT || '4002' }}/ >/dev/null 2>&1; then echo "✅ app is up"; break; fi
+              if [ "$i" = 30 ]; then echo "❌ app did not start"; docker compose logs --tail=80 app; exit 1; fi
+              sleep 2
+            done
+
+            echo "🧹 Cleaning up..."
+            docker builder prune -f
+            docker image prune -f
+
+            echo "🎉 Tartib deploy finished!"
