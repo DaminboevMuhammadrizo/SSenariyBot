@@ -95,14 +95,17 @@
       throw Object.assign(new Error('Internet bilan aloqa yo‘q'), { offline: true });
     }
     if (r.status === 304) return { $304: true };
-    const j = await r.json().catch(() => ({}));
+    const isJson = (r.headers.get('content-type') || '').includes('json');
+    const j = isJson ? await r.json().catch(() => ({})) : {};
+    if (r.ok && !isJson) throw Object.assign(new Error('Server noto‘g‘ri javob berdi'), { status: r.status });
     if (!r.ok) throw Object.assign(new Error(j.error || 'Xatolik yuz berdi'), { status: r.status, upgrade: j.upgrade });
     j.$etag = r.headers.get('etag');
     return j;
   }
   /** GET with the device copy: sends its ETag, keeps it on 304. */
   async function cached(key, path) {
-    const c = LS.get(key);
+    let c = LS.get(key);
+    if (key === 'boot' && !Array.isArray(c?.data?.projects)) c = null; // broken copy → full fetch
     const r = await api('GET', path, null, c?.etag);
     if (r.$304 && c) return c.data;
     const etag = r.$etag;
@@ -113,7 +116,8 @@
 
   // ---------------------------------------------------------------- state
   const S = {
-    boot: LS.get('boot')?.data || null,
+    // a device copy without a projects list is broken (e.g. cached from a bad response) — ignore it
+    boot: Array.isArray(LS.get('boot')?.data?.projects) ? LS.get('boot').data : null,
     projects: {},
     stack: [{ v: 'home' }],
   };
