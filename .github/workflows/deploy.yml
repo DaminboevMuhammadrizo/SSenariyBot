@@ -85,6 +85,8 @@ jobs:
             docker compose build
 
             echo "🔄 Almashtirish (faqat image o'zgargan konteyner qayta tushadi, db tegilmaydi)..."
+            # avvalgi uzilgan recreate'dan qolgan "<id>_tartib_app" konteyneri nom to'qnashuviga olib keladi
+            docker ps -a --format '{{.Names}}' | grep -E '^[0-9a-f]{12}_tartib_app$' | xargs -r docker rm -f || true
             docker compose up -d --remove-orphans
 
             echo "🩺 Health check..."
